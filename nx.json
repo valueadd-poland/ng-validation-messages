@@ -1,0 +1,21 @@
+{
+  "npmScope": "ng-validation-messages",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": "*",
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "validation-messages": {
+      "tags": []
+    },
+    "example": {
+      "tags": []
+    },
+    "example-e2e": {
+      "tags": []
+    }
+  }
+}

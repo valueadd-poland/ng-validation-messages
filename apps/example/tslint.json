@@ -1,0 +1,7 @@
+{
+  "extends": "../../tslint.json",
+  "rules": {
+    "directive-selector": [true, "attribute", "ng-validation-messages", "camelCase"],
+    "component-selector": [true, "element", "ng-validation-messages", "kebab-case"]
+  }
+}
