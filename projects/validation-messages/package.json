@@ -1,0 +1,22 @@
+{
+  "name": "@valueadd/ng-validation-messages",
+  "author": "valueadd",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valueadd-poland/ng-validation-messages.git"
+  },
+  "bugs": {
+    "url": "https://github.com/valueadd-poland/ng-validation-messages/issues"
+  },
+  "keywords": [
+    "angular",
+    "forms",
+    "validation"
+  ],
+  "license": "MIT",
+  "version": "0.0.0",
+  "peerDependencies": {
+    "@angular/common": "^7.2.0",
+    "@angular/core": "^7.2.0"
+  }
+}
