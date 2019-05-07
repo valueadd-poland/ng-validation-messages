@@ -3,6 +3,7 @@
   "author": "valueadd",
   "version": "0.0.0",
   "scripts": {
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -10,7 +11,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prepare-release": "git checkout origin master && git fetch origin master && git pull origin master && ng build validation-messages && npm run standard-version",
-    "push-release": "cd dist/validation-messages && npm publish --access public && git push origin master --tags --no-verify"
+    "push-release": "cd dist/validation-messages && npm publish --access public && git push origin master --tags --no-verify",
+    "validate": "node ./tools/tasks/validate-commit-message.js"
   },
   "private": true,
   "dependencies": {
@@ -37,6 +39,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
     "codelyzer": "~4.5.0",
+    "coveralls": "^3.0.3",
     "husky": "^1.3.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
