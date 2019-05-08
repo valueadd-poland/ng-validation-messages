@@ -1,9 +1,18 @@
 <form [formGroup]="form">
   <div class="dialog__content">
-    <label>name</label>
-    <input formControlName="name" />
+    <mat-form-field appearance="fill">
+      <mat-label>sdfsdfsdfsdfsdf</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error> </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>name</mat-label>
+      <input formControlName="name" />
+      <mat-error> </mat-error>
+    </mat-form-field>
+
     <label>email</label>
-    <input type="email" formControlName="email" />
+    <input matInput type="email" formControlName="email" />
     <h3 class="dialog__content-label">
       Add Comment
     </h3>
