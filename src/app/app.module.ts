@@ -16,6 +16,7 @@ export class AppModule {
   errorMessages: ValidationMessagesConfig = {
     documentType: 'Invalid document type.',
     email: 'Invalid e-mail address.',
+    emailDomain: 'Invalid email domain, it should be @valueadd.pl',
     length: 'This field should be {{value}} characters long.',
     matDatepickerMax: 'The date can not be later than {{value}}.',
     matDatepickerMin: 'The date can not be earlier than {{value}}.',
@@ -23,7 +24,12 @@ export class AppModule {
     maxlength: 'This field should have maximum {{value}} characters.',
     min: 'This field value should be greater than {{value}}.',
     minlength: 'This field should contain at least {{value}} characters.',
-    required: 'This field is required.'
+    required: 'This field is required.',
+    pattern: {
+      message: 'patternIssue',
+      validatorValue: 'requiredPattern',
+      pattern: '^[a-zA-Z]*$'
+    }
   };
 
   constructor() {
