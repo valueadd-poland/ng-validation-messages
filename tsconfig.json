@@ -14,7 +14,8 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2018", "dom"],
     "paths": {
-      "@valueadd/ng-validation-messages": ["dist/validation-messages"]
+      "@valueadd/ng-validation-messages": ["dist/validation-messages"],
+      "@valueadd/front": ["projects/front/src/public-api.ts"]
     }
   }
 }
