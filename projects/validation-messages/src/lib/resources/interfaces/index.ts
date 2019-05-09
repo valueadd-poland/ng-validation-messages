@@ -1,1 +1,2 @@
-export * from './validation-messages';
+export * from './validation-message';
+export * from './validation-messages-config';

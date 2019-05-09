@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ValidationMessagesConfig } from '../../projects/validation-messages/src/lib/resources/interfaces';
 import { ValidationMessagesService } from '../../projects/validation-messages/src/lib/services';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
@@ -12,7 +13,7 @@ import { AppRoutingModule } from './app.routing.module';
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  errorMessages = {
+  errorMessages: ValidationMessagesConfig = {
     documentType: 'Invalid document type.',
     email: 'Invalid e-mail address.',
     length: 'This field should be {{value}} characters long.',
@@ -22,15 +23,7 @@ export class AppModule {
     maxlength: 'This field should have maximum {{value}} characters.',
     min: 'This field value should be greater than {{value}}.',
     minlength: 'This field should contain at least {{value}} characters.',
-    required: 'This field is required.',
-    shortcut: { limitReached: 'You have reached the limit of shortcuts.' },
-    upload: {
-      acceptedFormats:
-        'The selected file cannot be uploaded because it is in the invalid format. The accepted formats: {{acceptedFormats}}.',
-      invalidFile: 'The selected file cannot be uploaded because it is invalid.',
-      maxFileSize:
-        'The selected file cannot be uploaded because it exceeds the maximum allowed file size of {{maxFileSize}}.'
-    }
+    required: 'This field is required.'
   };
 
   constructor() {
