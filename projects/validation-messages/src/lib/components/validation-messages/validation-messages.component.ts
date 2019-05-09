@@ -1,23 +1,24 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
+import { tap } from 'rxjs/internal/operators/tap';
 import { takeUntil } from 'rxjs/operators';
+import { ApiErrorMessage } from '../../resources/interfaces';
 import { ValidationMessagesService } from '../../services';
 
 @Component({
   selector: 'ng-validation-messages',
   templateUrl: './validation-messages.component.html'
 })
-export class ValidationMessagesComponent implements OnDestroy {
+export class ValidationMessagesComponent implements OnDestroy, OnInit {
   static materialErrorMatcher = false;
   static parser: ((str: string, params?: object) => string) | null = null;
+  messages: string[] = [];
   @Input()
   control?: FormControl;
   @Input()
   multiple = false;
   showServerErrors = false;
-  @Input()
-  useCache = true;
   valueChanges: Subscription | null = null;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -25,10 +26,9 @@ export class ValidationMessagesComponent implements OnDestroy {
     this.unsubscribeAndClearValueChanges = this.unsubscribeAndClearValueChanges.bind(this);
   }
 
-  // @TODO it was ApiErrorMessage[] model it's temporary any[], discuss it with rest of team
-  private _apiMessages: any[] | null = null;
+  private _apiMessages: ApiErrorMessage[] | null = null;
 
-  get apiMessages(): any[] | null {
+  get apiMessages(): ApiErrorMessage[] | null {
     return this.multiple
       ? this._apiMessages
       : this._apiMessages
@@ -37,8 +37,13 @@ export class ValidationMessagesComponent implements OnDestroy {
   }
 
   @Input()
-  set apiMessages(apiMessages: any[] | null) {
+  set apiMessages(apiMessages: ApiErrorMessage[] | null) {
     if (this._apiMessages === apiMessages) {
+      this._apiMessages = this.multiple
+        ? this._apiMessages
+        : this._apiMessages
+        ? this._apiMessages.slice(0, 1)
+        : null;
       return;
     }
 
@@ -62,18 +67,21 @@ export class ValidationMessagesComponent implements OnDestroy {
     }
   }
 
-  get errorMessages(): string[] {
-    const messages: string[] = [];
+  get useMaterialErrorMatcher(): boolean {
+    return ValidationMessagesComponent.materialErrorMatcher;
+  }
+
+  private errorMessages(): void {
+    this.messages = [];
 
     if (this.control && this.control.errors) {
       for (const propertyName in this.control.errors) {
         if (
           this.control.errors.hasOwnProperty(propertyName) &&
           propertyName !== 'server' &&
-          !(!this.multiple && messages.length === 1)
+          !(!this.multiple && this.messages.length === 1)
         ) {
-          this.clearValidationMessagesCacheIfNeeded();
-          messages.push(
+          this.messages.push(
             ValidationMessagesService.getValidatorErrorMessage(
               propertyName,
               this.control.errors[propertyName]
@@ -82,12 +90,6 @@ export class ValidationMessagesComponent implements OnDestroy {
         }
       }
     }
-
-    return messages;
-  }
-
-  get useMaterialErrorMatcher(): boolean {
-    return ValidationMessagesComponent.materialErrorMatcher;
   }
 
   ngOnDestroy(): void {
@@ -105,9 +107,11 @@ export class ValidationMessagesComponent implements OnDestroy {
     return message;
   }
 
-  private clearValidationMessagesCacheIfNeeded(): void {
-    if (!this.useCache) {
-      (ValidationMessagesService.getValidatorErrorMessage as any).cache.clear();
+  ngOnInit(): void {
+    if (this.control) {
+      this.control.valueChanges
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(() => this.errorMessages());
     }
   }
 

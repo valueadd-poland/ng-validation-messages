@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { validatorsWithValue } from '../resources/const';
-import { ValidatorValue, ValidatorWithValue } from '../resources/enums';
-import { EventType, ValidationMessage, ValidationMessagesConfig } from '../resources/interfaces';
+import { memoize } from '../resources/decorators';
+import { ValidationMessage, ValidationMessagesConfig } from '../resources/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -9,26 +9,22 @@ import { EventType, ValidationMessage, ValidationMessagesConfig } from '../resou
 export class ValidationMessagesService {
   private static validationMessages = {};
 
-  // @Todo: implement cache
+  @memoize()
   static getValidatorErrorMessage(validatorName: string, validatorValue: any = {}): string {
-    if (
-      (validatorName === 'pattern' &&
-        !ValidationMessagesService.validationMessages[validatorName][
-          validatorValue.requiredPattern
-        ]) ||
-      !ValidationMessagesService.validationMessages[validatorName]
-    ) {
-      console.warn(
-        `Validation message for ${validatorName} validator is not specified in ValidationMessagesService.`,
-        `Did you called 'ValidationMessagesService.setValidationMessages()'?`
-      );
-      return '';
+    if (!ValidationMessagesService.validationMessages[validatorName]) {
+      return ValidationMessagesService.validatorNotSpecified(validatorName);
     }
 
     if (validatorName === 'pattern') {
+      if (
+        !ValidationMessagesService.validationMessages[validatorName][validatorValue.requiredPattern]
+      ) {
+        return ValidationMessagesService.validatorNotSpecified(validatorName);
+      }
+
       return ValidationMessagesService.validationMessages[validatorName][
         validatorValue.requiredPattern
-      ];
+      ].message;
     }
 
     const validatorMessage = ValidationMessagesService.validationMessages[validatorName];
@@ -52,8 +48,11 @@ export class ValidationMessagesService {
     patternValidationMessages: any = {}
   ): void {
     ValidationMessagesService.validationMessages = {};
-    // Clear memoized cache
-    // (this.getValidatorErrorMessage as any).cache.clear();
+
+    // Clear memoized cache. Find different way to access clear method
+    if ((ValidationMessagesService.getValidatorErrorMessage as any).clear) {
+      (ValidationMessagesService.getValidatorErrorMessage as any).clear();
+    }
 
     // Set validation messages
     for (const key in validationMessages) {
@@ -63,7 +62,15 @@ export class ValidationMessagesService {
           validatorValue: this.getValidatorValue(key)
         };
       } else {
-        ValidationMessagesService.validationMessages[key] = validationMessages[key];
+        const validator = validationMessages[key] as ValidationMessage;
+        if (validator.pattern) {
+          ValidationMessagesService.validationMessages['pattern'] = {
+            ...ValidationMessagesService.validationMessages['pattern'],
+            [validator.pattern]: validator
+          };
+        } else {
+          ValidationMessagesService.validationMessages[key] = validator;
+        }
       }
     }
   }
@@ -80,5 +87,14 @@ export class ValidationMessagesService {
 
   private static getValidatorValue(key: string): string {
     return validatorsWithValue[key] || key;
+  }
+
+  private static validatorNotSpecified(validatorName: string): string {
+    console.warn(
+      `Validation message for ${validatorName} validator is not specified in ValidationMessagesService.`,
+      `Did you called 'ValidationMessagesService.setValidationMessages()'?`
+    );
+
+    return '';
   }
 }
