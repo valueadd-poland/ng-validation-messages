@@ -7,7 +7,7 @@ import { ValidationMessage, ValidationMessagesConfig } from '../resources/interf
   providedIn: 'root'
 })
 export class ValidationMessagesService {
-  private static validationMessagesFinalConfig: ValidationMessagesConfig<ValidationMessage>;
+  private static validationMessagesFinalConfig: ValidationMessagesConfig<ValidationMessage> = {};
 
   @Memoize()
   static getValidatorErrorMessage(validatorName: string, validatorValue: any = {}): string {
@@ -40,15 +40,7 @@ export class ValidationMessagesService {
       : validatorMessage.message;
   }
 
-  /**
-   * Set validation errorMessages.
-   * @param {ValidationMessage} validationMessagesConfig
-   * @param patternValidationMessages
-   */
-  static setValidationMessages(
-    validationMessagesConfig: ValidationMessagesConfig,
-    patternValidationMessages: any = {}
-  ): void {
+  static setValidationMessages(validationMessagesConfig: ValidationMessagesConfig): void {
     const validationMessagesFinalConfig = {};
     // Clear memoized cache. Find different way to access clear method
     if ((ValidationMessagesService.getValidatorErrorMessage as any).clear) {
@@ -78,14 +70,9 @@ export class ValidationMessagesService {
     ValidationMessagesService.validationMessagesFinalConfig = { ...validationMessagesFinalConfig };
   }
 
-  /**
-   * Interpolates {{value}} to provided value.
-   * @param {string} str
-   * @param value
-   * @returns {string}
-   */
   private static interpolateValue(str: string, value: any): string {
-    return str.replace(/{{value}}/g, value);
+    const regex = { re: /{{value}}/, flags: 'g' };
+    return str.replace(new RegExp(regex.re, regex.flags), value);
   }
 
   private static getValidatorValue(key: string): string {
