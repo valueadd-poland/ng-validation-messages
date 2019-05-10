@@ -1,7 +1,7 @@
 {
   "name": "ng-validation-messages",
   "author": "valueadd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "ng": "ng",
