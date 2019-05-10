@@ -1,7 +1,6 @@
-import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DoCheck, Input, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
-import { tap } from 'rxjs/internal/operators/tap';
 import { takeUntil } from 'rxjs/operators';
 import { ApiErrorMessage } from '../../resources/interfaces';
 import { ValidationMessagesService } from '../../services';
@@ -10,7 +9,7 @@ import { ValidationMessagesService } from '../../services';
   selector: 'ng-validation-messages',
   templateUrl: './validation-messages.component.html'
 })
-export class ValidationMessagesComponent implements OnDestroy, OnInit {
+export class ValidationMessagesComponent implements OnDestroy, DoCheck {
   static materialErrorMatcher = false;
   static parser: ((str: string, params?: object) => string) | null = null;
   errorMessages: string[] = [];
@@ -71,6 +70,31 @@ export class ValidationMessagesComponent implements OnDestroy, OnInit {
     return ValidationMessagesComponent.materialErrorMatcher;
   }
 
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+  parseApiErrorMessage(message: string, params: any): string {
+    const parser = ValidationMessagesComponent.parser;
+
+    if (parser) {
+      return parser(message, params);
+    }
+
+    return message;
+  }
+
+  ngDoCheck(): void {
+    if (
+      this.control &&
+      ((this.control.invalid && this.control.touched) ||
+        (!this.control.invalid && this.errorMessages.length > 0))
+    ) {
+      this.updateErrorMessages();
+    }
+  }
+
   private updateErrorMessages(): void {
     this.errorMessages = [];
 
@@ -89,29 +113,6 @@ export class ValidationMessagesComponent implements OnDestroy, OnInit {
           );
         }
       }
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-  }
-
-  parseApiErrorMessage(message: string, params: any): string {
-    const parser = ValidationMessagesComponent.parser;
-
-    if (parser) {
-      return parser(message, params);
-    }
-
-    return message;
-  }
-
-  ngOnInit(): void {
-    if (this.control) {
-      this.control.valueChanges
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(() => this.updateErrorMessages());
     }
   }
 
