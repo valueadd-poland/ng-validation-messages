@@ -10,7 +10,7 @@
     "test": "ng test --watch=false --progress=false --code-coverage",
     "lint": "./node_modules/.bin/tslint --project tsconfig.json ./src/**/*.ts --exclude **/*.d.ts",
     "e2e": "ng e2e",
-    "prepare-release": "git checkout origin master && git fetch origin master && git pull origin master && ng build validation-messages && ./node_modules/.bin/standard-version",
+    "prepare-release": "git checkout master && git fetch origin master && git pull origin master && ng build validation-messages && ./node_modules/.bin/standard-version",
     "push-release": "cd dist/validation-messages && npm publish --access public && git push origin master --tags --no-verify",
     "validate": "node ./tools/tasks/validate-commit-message.js"
   },
