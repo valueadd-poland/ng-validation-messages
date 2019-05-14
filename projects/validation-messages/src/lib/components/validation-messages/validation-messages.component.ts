@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, DoCheck, Input, OnDestroy } from '@angula
 import { FormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ApiErrorMessage } from '../../resources/interfaces';
+import { ApiErrorMessage, Parser } from '../../resources/interfaces';
 import { ValidationMessagesService } from '../../services';
 
 @Component({
@@ -10,8 +10,7 @@ import { ValidationMessagesService } from '../../services';
   templateUrl: './validation-messages.component.html'
 })
 export class ValidationMessagesComponent implements OnDestroy, DoCheck {
-  static materialErrorMatcher = false;
-  static parser: ((str: string, params?: object) => string) | null = null;
+  materialErrorMatcher = false;
   errorMessages: string[] = [];
   @Input()
   control?: FormControl;
@@ -20,8 +19,12 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
   valueChanges: Subscription | null = null;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
-  constructor(private cd: ChangeDetectorRef) {
+  constructor(
+    private cd: ChangeDetectorRef,
+    private validationMessagesService: ValidationMessagesService
+  ) {
     this.unsubscribeAndClearValueChanges = this.unsubscribeAndClearValueChanges.bind(this);
+    this.materialErrorMatcher = validationMessagesService.materialErrorMatcher;
   }
 
   private _multiple: boolean = false;
@@ -58,20 +61,6 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
     }
   }
 
-  get useMaterialErrorMatcher(): boolean {
-    return ValidationMessagesComponent.materialErrorMatcher;
-  }
-
-  static parseApiErrorMessage(message: string, params: any): string {
-    const parser = ValidationMessagesComponent.parser;
-
-    if (parser) {
-      return parser(message, params);
-    }
-
-    return message;
-  }
-
   observeInputValueChanges(): void {
     if (!this.valueChanges) {
       this.valueChanges = this.control.valueChanges
@@ -92,14 +81,14 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
     this.parsedApiErrorMessages = [];
     if (apiErrorMessages instanceof Array) {
       apiErrorMessages.forEach(apiErrorMessage => {
-        apiErrorMessage.message = ValidationMessagesComponent.parseApiErrorMessage(
+        apiErrorMessage.message = this.validationMessagesService.parseApiErrorMessage(
           apiErrorMessage.message,
           apiErrorMessage.property
         );
         this.parsedApiErrorMessages.push(apiErrorMessage.message);
       });
     } else {
-      apiErrorMessages.message = ValidationMessagesComponent.parseApiErrorMessage(
+      apiErrorMessages.message = this.validationMessagesService.parseApiErrorMessage(
         apiErrorMessages.message,
         apiErrorMessages.property
       );
@@ -133,7 +122,7 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
           !(!this.multiple && this.errorMessages.length === 1)
         ) {
           this.errorMessages.push(
-            ValidationMessagesService.getValidatorErrorMessage(
+            this.validationMessagesService.getValidatorErrorMessage(
               propertyName,
               this.control.errors[propertyName]
             )
