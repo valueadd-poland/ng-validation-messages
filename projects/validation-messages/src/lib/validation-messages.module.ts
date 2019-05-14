@@ -7,14 +7,4 @@ import { ValidationMessagesComponent } from './components/validation-messages/va
   declarations: [ValidationMessagesComponent],
   exports: [ValidationMessagesComponent]
 })
-export class ValidationMessagesModule {
-  static setServerMessagesParser(
-    serverMessageParser: ((str: string, params?: any) => string) | null
-  ): void {
-    ValidationMessagesComponent.parser = serverMessageParser;
-  }
-
-  static useMaterialErrorMatcher(): void {
-    ValidationMessagesComponent.materialErrorMatcher = true;
-  }
-}
+export class ValidationMessagesModule {}

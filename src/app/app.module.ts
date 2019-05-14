@@ -32,11 +32,7 @@ export class AppModule {
     }
   };
 
-  constructor() {
-    this.initValidationMessages();
-  }
-
-  private initValidationMessages(): void {
-    ValidationMessagesService.setValidationMessages(this.errorMessages);
+  constructor(private validationMessageService: ValidationMessagesService) {
+    this.validationMessageService.setValidationMessages(this.errorMessages);
   }
 }

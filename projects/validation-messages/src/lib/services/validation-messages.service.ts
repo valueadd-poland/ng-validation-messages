@@ -1,35 +1,37 @@
 import { Injectable } from '@angular/core';
 import { angularValidatorsWithValueMap } from '../resources/const';
 import { Memoize } from '../resources/decorators';
-import { ValidationMessage, ValidationMessagesConfig } from '../resources/interfaces';
+import { Parser, ValidationMessage, ValidationMessagesConfig } from '../resources/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ValidationMessagesService {
-  private static validationMessagesFinalConfig: ValidationMessagesConfig<ValidationMessage> = {};
+  private parser: Parser | null;
+  private validationMessagesFinalConfig: ValidationMessagesConfig<ValidationMessage> = {};
+
+  private _materialErrorMatcher = false;
+
+  get materialErrorMatcher(): boolean {
+    return this._materialErrorMatcher;
+  }
 
   @Memoize()
-  static getValidatorErrorMessage(validatorName: string, validatorValue: any = {}): string {
-    if (!ValidationMessagesService.validationMessagesFinalConfig[validatorName]) {
-      return ValidationMessagesService.validatorNotSpecified(validatorName);
+  getValidatorErrorMessage(validatorName: string, validatorValue: any = {}): string {
+    if (!this.validationMessagesFinalConfig[validatorName]) {
+      return this.validatorNotSpecified(validatorName);
     }
 
     if (validatorName === 'pattern') {
-      if (
-        !ValidationMessagesService.validationMessagesFinalConfig[validatorName][
-          validatorValue.requiredPattern
-        ]
-      ) {
-        return ValidationMessagesService.validatorNotSpecified(validatorName);
+      if (!this.validationMessagesFinalConfig[validatorName][validatorValue.requiredPattern]) {
+        return this.validatorNotSpecified(validatorName);
       }
 
-      return ValidationMessagesService.validationMessagesFinalConfig[validatorName][
-        validatorValue.requiredPattern
-      ].message;
+      return this.validationMessagesFinalConfig[validatorName][validatorValue.requiredPattern]
+        .message;
     }
 
-    const validatorMessage = ValidationMessagesService.validationMessagesFinalConfig[validatorName];
+    const validatorMessage = this.validationMessagesFinalConfig[validatorName];
     return validatorMessage.validatorValue
       ? this.interpolateValue(
           validatorMessage.message,
@@ -40,11 +42,11 @@ export class ValidationMessagesService {
       : validatorMessage.message;
   }
 
-  static setValidationMessages(validationMessagesConfig: ValidationMessagesConfig): void {
+  setValidationMessages(validationMessagesConfig: ValidationMessagesConfig): void {
     const validationMessagesFinalConfig = {};
     // Clear memoized cache. Find different way to access clear method
-    if ((ValidationMessagesService.getValidatorErrorMessage as any).clear) {
-      (ValidationMessagesService.getValidatorErrorMessage as any).clear();
+    if ((this.getValidatorErrorMessage as any).clear) {
+      (this.getValidatorErrorMessage as any).clear();
     }
 
     // Set validation errorMessages
@@ -67,22 +69,38 @@ export class ValidationMessagesService {
       }
     }
 
-    ValidationMessagesService.validationMessagesFinalConfig = { ...validationMessagesFinalConfig };
+    this.validationMessagesFinalConfig = { ...validationMessagesFinalConfig };
   }
 
-  private static interpolateValue(str: string, value: any): string {
+  setServerMessagesParser(serverMessageParser: Parser | null): void {
+    this.parser = serverMessageParser;
+  }
+
+  useMaterialErrorMatcher(): void {
+    this._materialErrorMatcher = true;
+  }
+
+  parseApiErrorMessage(message: string, params: any): string {
+    if (this.parser) {
+      return this.parser.parse(message, params);
+    }
+
+    return message;
+  }
+
+  private interpolateValue(str: string, value: any): string {
     const regex = { re: /{{value}}/, flags: 'g' };
     return str.replace(new RegExp(regex.re, regex.flags), value);
   }
 
-  private static getValidatorValue(key: string): string {
+  private getValidatorValue(key: string): string {
     return angularValidatorsWithValueMap[key] || key;
   }
 
-  private static validatorNotSpecified(validatorName: string): string {
+  private validatorNotSpecified(validatorName: string): string {
     console.warn(
-      `Validation message for ${validatorName} validator is not specified in ValidationMessagesService.`,
-      `Did you called 'ValidationMessagesService.setValidationMessages()'?`
+      `Validation message for ${validatorName} validator is not specified in this.`,
+      `Did you called 'this.setValidationMessages()'?`
     );
 
     return '';
