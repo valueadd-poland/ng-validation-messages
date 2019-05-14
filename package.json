@@ -1,7 +1,7 @@
 {
   "name": "ng-validation-messages",
   "author": "valueadd",
-  "version": "0.1.1",
+  "version": "1.1.0",
   "scripts": {
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "ng": "ng",
@@ -10,9 +10,11 @@
     "test": "ng test --watch=false --progress=false --code-coverage",
     "lint": "./node_modules/.bin/tslint --project tsconfig.json ./src/**/*.ts --exclude **/*.d.ts",
     "e2e": "ng e2e",
-    "prepare-release": "git checkout master && git fetch origin master && git pull origin master && ng build validation-messages && ./node_modules/.bin/standard-version",
+    "prepare-release": "git checkout master && git fetch origin master && git pull origin master && npm run standard-version && ng build validation-messages && npm run copy-files",
     "push-release": "cd dist/validation-messages && npm publish --access public && git push origin master --tags --no-verify",
-    "validate": "node ./tools/tasks/validate-commit-message.js"
+    "validate": "node ./tools/tasks/validate-commit-message.js",
+    "standard-version": "cd ./projects/validation-messages && ./../../node_modules/.bin/standard-version",
+    "copy-files": "cp ./README.md ./dist/validation-messages"
   },
   "private": true,
   "dependencies": {
