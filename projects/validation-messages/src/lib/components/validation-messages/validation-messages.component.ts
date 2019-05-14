@@ -15,9 +15,8 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
   errorMessages: string[] = [];
   @Input()
   control?: FormControl;
-  @Input()
-  multiple = false;
   showServerErrors = false;
+  parsedApiErrorMessages: string[] = [];
   valueChanges: Subscription | null = null;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
 
@@ -25,37 +24,56 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
     this.unsubscribeAndClearValueChanges = this.unsubscribeAndClearValueChanges.bind(this);
   }
 
-  private _apiErrorMessages: ApiErrorMessage[] | null = null;
+  private _multiple: boolean = false;
 
-  get apiErrorMessages(): ApiErrorMessage[] | null {
-    return this.multiple
-      ? this._apiErrorMessages
-      : this._apiErrorMessages
-      ? this._apiErrorMessages.slice(0, 1)
-      : null;
+  get multiple(): boolean {
+    return this._multiple;
   }
 
   @Input()
-  set apiErrorMessages(apiErrorMessages: ApiErrorMessage[] | null) {
-    if (this._apiErrorMessages === apiErrorMessages) {
-      this._apiErrorMessages = this.multiple
-        ? this._apiErrorMessages
-        : this._apiErrorMessages
-        ? this._apiErrorMessages.slice(0, 1)
-        : null;
-      return;
-    }
+  set multiple(multiple: boolean) {
+    this._multiple = multiple;
+    this.updateErrorMessages();
+  }
 
+  private _apiErrorMessages: ApiErrorMessage[] | ApiErrorMessage | null = null;
+
+  get apiErrorMessages(): ApiErrorMessage[] | ApiErrorMessage {
+    return this._apiErrorMessages;
+  }
+
+  @Input()
+  set apiErrorMessages(apiErrorMessages: ApiErrorMessage[] | ApiErrorMessage | null) {
     this.unsubscribeAndClearValueChanges();
-
     this._apiErrorMessages = apiErrorMessages;
+    this.parseApiErrorMessages(this._apiErrorMessages);
     this.showServerErrors = true;
 
-    if (this.control && apiErrorMessages && apiErrorMessages.length) {
+    if (this.control && apiErrorMessages) {
       this.control.setErrors({
         server: apiErrorMessages
       });
 
+      this.observeInputValueChanges();
+    }
+  }
+
+  get useMaterialErrorMatcher(): boolean {
+    return ValidationMessagesComponent.materialErrorMatcher;
+  }
+
+  static parseApiErrorMessage(message: string, params: any): string {
+    const parser = ValidationMessagesComponent.parser;
+
+    if (parser) {
+      return parser(message, params);
+    }
+
+    return message;
+  }
+
+  observeInputValueChanges(): void {
+    if (!this.valueChanges) {
       this.valueChanges = this.control.valueChanges
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(this.unsubscribeAndClearValueChanges);
@@ -66,23 +84,32 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
     }
   }
 
-  get useMaterialErrorMatcher(): boolean {
-    return ValidationMessagesComponent.materialErrorMatcher;
+  parseApiErrorMessages(apiErrorMessages: ApiErrorMessage[] | ApiErrorMessage | null): void {
+    if (!apiErrorMessages) {
+      return;
+    }
+
+    this.parsedApiErrorMessages = [];
+    if (apiErrorMessages instanceof Array) {
+      apiErrorMessages.forEach(apiErrorMessage => {
+        apiErrorMessage.message = ValidationMessagesComponent.parseApiErrorMessage(
+          apiErrorMessage.message,
+          apiErrorMessage.property
+        );
+        this.parsedApiErrorMessages.push(apiErrorMessage.message);
+      });
+    } else {
+      apiErrorMessages.message = ValidationMessagesComponent.parseApiErrorMessage(
+        apiErrorMessages.message,
+        apiErrorMessages.property
+      );
+      this.parsedApiErrorMessages.push(apiErrorMessages.message);
+    }
   }
 
   ngOnDestroy(): void {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-  }
-
-  parseApiErrorMessage(message: string, params: any): string {
-    const parser = ValidationMessagesComponent.parser;
-
-    if (parser) {
-      return parser(message, params);
-    }
-
-    return message;
   }
 
   ngDoCheck(): void {
