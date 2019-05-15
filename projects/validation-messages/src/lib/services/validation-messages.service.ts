@@ -89,8 +89,8 @@ export class ValidationMessagesService {
   }
 
   private interpolateValue(str: string, value: any): string {
-    const regex = { re: /{{value}}/, flags: 'g' };
-    return str.replace(new RegExp(regex.re, regex.flags), value);
+    const regex = /{{(.*)}}+/g;
+    return str.replace(new RegExp(regex), value);
   }
 
   private getValidatorValue(key: string): string {
