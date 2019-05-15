@@ -9,7 +9,7 @@ import { Parser, ValidationMessage, ValidationMessagesConfig } from '../resource
 export class ValidationMessagesService {
   private parser: Parser | null;
   private validationMessagesFinalConfig: ValidationMessagesConfig<ValidationMessage> = {};
-
+  private templateMatcher: RegExp = /{{(.*)}}+/g;
   private _materialErrorMatcher = false;
 
   get materialErrorMatcher(): boolean {
@@ -88,9 +88,16 @@ export class ValidationMessagesService {
     return message;
   }
 
+  setTemplateMatcher(templateMatcher: RegExp): void {
+    if (templateMatcher instanceof RegExp) {
+      this.templateMatcher = templateMatcher;
+    } else {
+      console.error('Template matcher must be a regex.');
+    }
+  }
+
   private interpolateValue(str: string, value: any): string {
-    const regex = /{{(.*)}}+/g;
-    return str.replace(new RegExp(regex), value);
+    return str.replace(new RegExp(this.templateMatcher), value);
   }
 
   private getValidatorValue(key: string): string {
