@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, DoCheck, Input, OnDestroy } from '@angula
 import { FormControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ApiErrorMessage, Parser } from '../../resources/interfaces';
+import { ApiErrorMessage } from '../../resources/interfaces';
 import { ValidationMessagesService } from '../../services';
 
 @Component({
@@ -39,14 +39,20 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
     this.updateErrorMessages();
   }
 
-  private _apiErrorMessages: ApiErrorMessage[] | ApiErrorMessage | null = null;
+  private _apiErrorMessages:
+    | Array<ApiErrorMessage | string>
+    | ApiErrorMessage
+    | string
+    | null = null;
 
-  get apiErrorMessages(): ApiErrorMessage[] | ApiErrorMessage {
+  get apiErrorMessages(): Array<ApiErrorMessage | string> | ApiErrorMessage | string | null {
     return this._apiErrorMessages;
   }
 
   @Input()
-  set apiErrorMessages(apiErrorMessages: ApiErrorMessage[] | ApiErrorMessage | null) {
+  set apiErrorMessages(
+    apiErrorMessages: Array<ApiErrorMessage | string> | ApiErrorMessage | string | null
+  ) {
     this.unsubscribeAndClearValueChanges();
     this._apiErrorMessages = apiErrorMessages;
     this.parseApiErrorMessages(this._apiErrorMessages);
@@ -73,27 +79,20 @@ export class ValidationMessagesComponent implements OnDestroy, DoCheck {
     }
   }
 
-  parseApiErrorMessages(apiErrorMessages: ApiErrorMessage[] | ApiErrorMessage | null): void {
+  parseApiErrorMessages(
+    apiErrorMessages: Array<ApiErrorMessage | string> | ApiErrorMessage | string | null
+  ): void {
     if (!apiErrorMessages) {
+      this.parsedApiErrorMessages = [];
       return;
     }
 
-    this.parsedApiErrorMessages = [];
-    if (apiErrorMessages instanceof Array) {
-      apiErrorMessages.forEach(apiErrorMessage => {
-        apiErrorMessage.message = this.validationMessagesService.parseApiErrorMessage(
-          apiErrorMessage.message,
-          apiErrorMessage.property
-        );
-        this.parsedApiErrorMessages.push(apiErrorMessage.message);
-      });
-    } else {
-      apiErrorMessages.message = this.validationMessagesService.parseApiErrorMessage(
-        apiErrorMessages.message,
-        apiErrorMessages.property
-      );
-      this.parsedApiErrorMessages.push(apiErrorMessages.message);
-    }
+    const messages = apiErrorMessages instanceof Array ? [...apiErrorMessages] : [apiErrorMessages];
+    this.parsedApiErrorMessages = messages.map((message: ApiErrorMessage | string) =>
+      message instanceof Object
+        ? this.validationMessagesService.parseApiErrorMessage(message.message, message.property)
+        : message
+    );
   }
 
   ngOnDestroy(): void {

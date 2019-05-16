@@ -14,12 +14,14 @@ const validationConfig = {
 })
 export class TestFormComponent implements OnInit {
   form: FormGroup;
-  apiErrors: ApiErrorMessage[] = [
+  apiErrors: Array<ApiErrorMessage | string> = [
     { property: 'dodo', message: 'DoDuCheck' },
-    { property: 'dodo', message: 'DoDuCheck' }
+    { property: 'dodo', message: 'DoDuCheck' },
+    'erroooor'
   ];
   apiError: ApiErrorMessage = { property: 'dodo', message: 'DoDuCheck' };
   multiple = false;
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
