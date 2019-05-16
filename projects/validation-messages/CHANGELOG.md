@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.5.0](https://github.com/valueadd-poland/ng-validation-messages/compare/v1.4.0...v1.5.0) (2019-05-16)
+
+
+### Features
+
+* **component:** Allowing strings as input to apiErrorMessages ([#16](https://github.com/valueadd-poland/ng-validation-messages/issues/16)) ([6ac60e1](https://github.com/valueadd-poland/ng-validation-messages/commit/6ac60e1))
+
+
+
 # [1.4.0](https://github.com/valueadd-poland/ng-validation-messages/compare/v1.3.0...v1.4.0) (2019-05-16)
 
 
