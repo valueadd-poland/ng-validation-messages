@@ -3,4 +3,5 @@ export interface ValidationMessage {
   validatorValue?: string;
   pattern?: string;
   validatorValueParser?: (value: any) => string;
+  templateMatcher?: RegExp;
 }
