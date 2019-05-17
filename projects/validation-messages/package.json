@@ -14,7 +14,7 @@
     "validation"
   ],
   "license": "MIT",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "dependencies": {
     "memoizee": "^0.4.14"
   },
