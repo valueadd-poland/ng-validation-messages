@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.1](https://github.com/valueadd-poland/ng-validation-messages/compare/v1.6.0...v1.6.1) (2019-05-29)
+
+
+### Bug Fixes
+
+* **project:** Readme formatting ([#22](https://github.com/valueadd-poland/ng-validation-messages/issues/22)) ([4a03cdf](https://github.com/valueadd-poland/ng-validation-messages/commit/4a03cdf))
+
+
+
 # [1.6.0](https://github.com/valueadd-poland/ng-validation-messages/compare/v1.5.3...v1.6.0) (2019-05-29)
 
 
