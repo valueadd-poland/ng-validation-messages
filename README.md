@@ -60,7 +60,7 @@ export interface ValidationMessage {
 }
 ```
 
-` validatorValue`: specifies the name of the property under the validator name in Form Control errrors object from where the value for interpolation will be taken. 
+`validatorValue`: specifies the name of the property under the validator name in Form Control errrors object from where the value for interpolation will be taken. 
 
 `validatorValueParser`: specifies a function to parse the validator value
 
@@ -87,14 +87,18 @@ Now, in some component's template, instantiate ValidationMessagesComponent and p
 
 ##### Methods:
 `setValidationMessages(config: ValidationMessagesConfig)`: Sets validation messages configuration
+
 `setTemplateMatcher(matcher: RegExp)`: Sets specifies which part of the message string will be replaced with interpolated value (the default matcher is `/{{(.*)}}+/g`)
+
 `useMaterialErrorMatcher()`: If ValidationMessagesComponent is used together with custom errorStateMatcher for Angular Material's matInput and this method is called, the errors will be shown instantly and not on lost focus (errorStateMatcher needs to reflect that). 
 
 ### ValidationMessagesComponent
 
 ##### Inputs:
 `control: FormControl`: Specifies for which control errors should be shown 
+
 `multiple: boolean`: Specifies wether to show multiple error messages (default: false)
+
 `apiErrorMessages: Array<string | ApiErrorMessage>`: If an error is returned from an API request, this input allows to display it instantly
 
 
