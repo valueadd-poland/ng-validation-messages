@@ -22,10 +22,14 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -37,14 +41,7 @@
               "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
+              "buildOptimizer": true
             }
           }
         },
@@ -65,23 +62,44 @@
             "browserTarget": "ng-validation-messages:build"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "styles": ["src/styles.scss"],
-            "scripts": [],
-            "assets": ["src/favicon.ico", "src/assets"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
           "options": {
-            "tsConfig": ["src/tsconfig.app.json", "src/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "devServerTarget": "ng-validation-messages:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ng-validation-messages:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "ng-validation-messages:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ng-validation-messages:serve:production"
+            }
           }
         }
       }
@@ -93,28 +111,52 @@
       "prefix": "ng-validation-messages",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/validation-messages/tsconfig.lib.json",
             "project": "projects/validation-messages/ng-package.json"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "main": "projects/validation-messages/src/test.ts",
-            "tsConfig": "projects/validation-messages/tsconfig.spec.json",
-            "karmaConfig": "projects/validation-messages/karma.conf.js"
+            "lintFilePatterns": [
+              "projects/validation-messages/**/*.ts",
+              "projects/validation-messages/**/*.html"
+            ]
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
           "options": {
-            "tsConfig": [
-              "projects/validation-messages/tsconfig.lib.json",
-              "projects/validation-messages/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**"]
+            "devServerTarget": "validation-messages:serve",
+            "configFile": "projects/validation-messages/cypress.config.js"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "validation-messages:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false,
+            "configFile": "projects/validation-messages/cypress.config.js"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "validation-messages:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "validation-messages:serve:production"
+            }
           }
         }
       }
@@ -126,29 +168,62 @@
       "prefix": "ng",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
             "tsConfig": "projects/front/tsconfig.lib.json",
             "project": "projects/front/ng-package.json"
           }
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "main": "projects/front/src/test.ts",
-            "tsConfig": "projects/front/tsconfig.spec.json",
-            "karmaConfig": "projects/front/karma.conf.js"
+            "lintFilePatterns": [
+              "projects/front/**/*.ts",
+              "projects/front/**/*.html"
+            ]
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
           "options": {
-            "tsConfig": ["projects/front/tsconfig.lib.json", "projects/front/tsconfig.spec.json"],
-            "exclude": ["**/node_modules/**"]
+            "devServerTarget": "front:serve",
+            "configFile": "projects/front/cypress.config.js"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "front:serve:production"
+            }
+          }
+        },
+        "cypress-open": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "watch": true,
+            "headless": false,
+            "configFile": "projects/front/cypress.config.js"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "front:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "front:serve:production"
+            }
           }
         }
       }
     }
   },
-  "defaultProject": "validation-messages"
+  "defaultProject": "validation-messages",
+  "cli": {
+    "analytics": "848a624a-486c-49aa-a7b2-cedcc3a78f4b",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
+  }
 }

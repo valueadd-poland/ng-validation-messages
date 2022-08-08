@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ValidationMessagesConfig } from '../../projects/validation-messages/src/lib/resources/interfaces';
-import { ValidationMessagesService } from '../../projects/validation-messages/src/lib/services/validation-messages.service';
+import { ValidationMessagesConfig } from '../../projects/validation-messages/src/lib/resources';
+import { ValidationMessagesService } from '../../projects/validation-messages/src/lib/services';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing.module';
 
