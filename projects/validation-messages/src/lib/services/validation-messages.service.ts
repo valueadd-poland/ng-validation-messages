@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { angularValidatorsWithValueMap } from '../resources/const';
-import { Memoize } from '../resources/decorators';
-import { Parser, ValidationMessage, ValidationMessagesConfig } from '../resources/interfaces';
+import { angularValidatorsWithValueMap } from '../resources';
+import { Memoize } from '../resources';
+import { Parser, ValidationMessage, ValidationMessagesConfig } from '../resources';
 
 @Injectable({
   providedIn: 'root'

@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'front',
-    loadChildren: './lazy/lazy-lib-wrapper.module#LazyLibWrapperModule'
+    loadChildren: () => import('./lazy/lazy-lib-wrapper.module').then(m => m.LazyLibWrapperModule)
   }
 ];
 
