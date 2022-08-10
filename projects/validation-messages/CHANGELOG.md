@@ -1,6 +1,15 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [14.0.0](https://github.com/valueadd-poland/ng-validation-messages/compare/v1.6.1...v14.0.0) (2022-08-10)
+
+
+### Features
+
+* **project:** adjust build ([0fec0e7](https://github.com/valueadd-poland/ng-validation-messages/commit/0fec0e7239b44136d806361cb93651990e08e237))
+* **project:** dependencies update ([4424732](https://github.com/valueadd-poland/ng-validation-messages/commit/4424732fb6ad323c9218b50e5ad8fe9926f4094d))
+* **project:** remove memoize decorator and add lodash-decorators ([8498b77](https://github.com/valueadd-poland/ng-validation-messages/commit/8498b7760df7ccef13892804548f6cad450f0e76))
 
 ## [1.6.1](https://github.com/valueadd-poland/ng-validation-messages/compare/v1.6.0...v1.6.1) (2019-05-29)
 
