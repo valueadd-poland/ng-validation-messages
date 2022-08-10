@@ -16,6 +16,6 @@
     "paths": {
       "@valueadd/ng-validation-messages": ["dist/validation-messages"],
       "@valueadd/front": ["projects/front/src/public-api.ts"]
-    },
+    }
   }
 }

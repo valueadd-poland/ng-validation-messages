@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { angularValidatorsWithValueMap } from '../resources';
-import { Memoize } from '../resources';
 import { Parser, ValidationMessage, ValidationMessagesConfig } from '../resources';
+import { Memoize } from 'lodash-decorators';
 
 @Injectable({
   providedIn: 'root'
